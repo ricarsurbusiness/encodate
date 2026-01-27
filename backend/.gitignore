@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /build
+*.tsbuildinfo
 
 # Logs
 logs
@@ -37,10 +38,15 @@ lerna-debug.log*
 
 # dotenv environment variable files
 .env
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+.env.*.local
+
+# Environment variables backup
+.env.backup
+.env.bak
 
 # temp directory
 .temp
@@ -54,3 +60,65 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Prisma
+/generated/prisma
+/src/generated
+node_modules/.prisma
+prisma/dev.db
+prisma/dev.db-journal
+*.db
+*.db-journal
+
+# Database
+*.sqlite
+*.sqlite3
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+
+# System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Package manager lock files (keep only one)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local development
+*.local
+
+# Build files
+*.js.map
+*.d.ts.map
+
+# PM2
+.pm2
+*.pm2.log
+
+# Sentry
+.sentryclirc
