@@ -32,6 +32,7 @@ model User {
   password  String
   name      String
   role      Role     @default(CLIENT)
+  phone     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
