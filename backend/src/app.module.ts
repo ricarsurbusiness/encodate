@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import envConfig from './config/env.config';
 import { UsersModule } from './users/users.module';
+import { BusinessModule } from './businesses/business.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     AuthModule,
     UsersModule,
+    BusinessModule,
   ],
   controllers: [],
   providers: [],
