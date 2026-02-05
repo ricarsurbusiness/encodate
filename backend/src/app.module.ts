@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import envConfig from './config/env.config';
 import { UsersModule } from './users/users.module';
 import { BusinessModule } from './businesses/business.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BusinessModule } from './businesses/business.module';
     AuthModule,
     UsersModule,
     BusinessModule,
+    ServicesModule,
   ],
   controllers: [],
   providers: [],

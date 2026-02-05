@@ -116,12 +116,6 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      if (error.code === 'P2025') {
-        throw new NotFoundException(`User not found`);
-      }
       throw error;
     }
   }
