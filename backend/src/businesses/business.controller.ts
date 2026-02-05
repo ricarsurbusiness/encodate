@@ -23,7 +23,8 @@ export class BusinessController {
   constructor(private readonly businessService: BusinessService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   async create(
     @Body() createBusinessDto: CreateBusinessDto,
     @CurrentUser() user: any,
