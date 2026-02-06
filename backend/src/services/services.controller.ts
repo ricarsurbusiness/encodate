@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 import {
   Controller,
   Get,
@@ -29,7 +31,12 @@ export class ServicesController {
     @Body() createServiceDto: CreateServiceDto,
     @CurrentUser() user: any,
   ) {
-    return this.servicesService.createService(businessId, createServiceDto);
+    return this.servicesService.createService(
+      businessId,
+      createServiceDto,
+      user.id,
+      user.role,
+    );
   }
 
   @Get('businesses/:businessId/services')
@@ -50,13 +57,18 @@ export class ServicesController {
     @Body() updateServiceDto: UpdateServiceDto,
     @CurrentUser() user: any,
   ) {
-    return this.servicesService.update(id, updateServiceDto);
+    return this.servicesService.update(
+      id,
+      updateServiceDto,
+      user.id,
+      user.role,
+    );
   }
 
   @Delete('services/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'STAFF')
   async remove(@Param('id') id: string, @CurrentUser() user: any) {
-    return this.servicesService.remove(id);
+    return this.servicesService.remove(id, user.id, user.role);
   }
 }

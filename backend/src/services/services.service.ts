@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,7 +15,12 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 export class ServicesService {
   constructor(private prisma: PrismaService) {}
 
-  async createService(businessId: string, createServiceDto: CreateServiceDto) {
+  async createService(
+    businessId: string,
+    createServiceDto: CreateServiceDto,
+    userId: string,
+    userRole: string,
+  ) {
     const business = await this.prisma.client.business.findUnique({
       where: { id: businessId },
     });
@@ -22,7 +28,9 @@ export class ServicesService {
     if (!business) {
       throw new NotFoundException(`Business with ID ${businessId} not found`);
     }
-
+    if (business.ownerId !== userId && userRole !== 'ADMIN') {
+      throw new ForbiddenException('You are not the owner of this business');
+    }
     try {
       const service = await this.prisma.client.service.create({
         data: {
@@ -56,7 +64,13 @@ export class ServicesService {
       where: { id },
       include: {
         business: {
-          select: { id: true, name: true, address: true, phone: true },
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            phone: true,
+            ownerId: true,
+          },
         },
       },
     });
@@ -65,8 +79,18 @@ export class ServicesService {
     }
     return service;
   }
-  async update(id: string, updateServiceDto: UpdateServiceDto) {
-    await this.findOne(id);
+  async update(
+    id: string,
+    updateServiceDto: UpdateServiceDto,
+    userId: string,
+    userRole: string,
+  ) {
+    const service = await this.findOne(id);
+    if (service.business.ownerId !== userId && userRole !== 'ADMIN') {
+      throw new ForbiddenException(
+        'You are not authorized to update this service',
+      );
+    }
     try {
       const updatedService = await this.prisma.client.service.update({
         where: { id },
@@ -82,8 +106,13 @@ export class ServicesService {
       throw error;
     }
   }
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string, userRole: string) {
+    const service = await this.findOne(id);
+    if (service.business.ownerId !== userId && userRole !== 'ADMIN') {
+      throw new ForbiddenException(
+        'You are not authorized to delete this service',
+      );
+    }
 
     try {
       return await this.prisma.client.service.delete({ where: { id } });

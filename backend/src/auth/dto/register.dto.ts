@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  MinLength,
+  IsString,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { Role } from 'src/generated/enums';
 
 export class RegisterDto {
@@ -13,8 +20,10 @@ export class RegisterDto {
   name: string;
 
   @IsString()
-  phone: string;
+  @IsOptional()
+  phone?: string;
 
-  @IsString()
-  role: Role;
+  @IsEnum(Role)
+  @IsOptional()
+  role?: Role;
 }
