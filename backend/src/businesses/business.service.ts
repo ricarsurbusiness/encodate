@@ -8,6 +8,11 @@ import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import {
+  PaginationMetaDto,
+  PaginatedResponseDto,
+} from 'src/common/dto/pagination.index';
+import { SearchBusinessDto } from './dto/search-business.dto';
 
 @Injectable()
 export class BusinessService {
@@ -39,24 +44,32 @@ export class BusinessService {
       throw error;
     }
   }
-  async findAll() {
-    return await this.prisma.client.business.findMany({
-      where: {
-        isActive: true,
-      },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+  async findAll(searchBusinessDto: SearchBusinessDto) {
+    const { page = 1, limit = 10, search } = searchBusinessDto;
+    const where: any = { isActive: true };
+    if(search){
+      where.name = { contains: search, mode: 'insensitive' }; //mode: 'insensitive' para búsque sin importar mayúsculas/minúsculas
+    }
+
+    const [businesses, total] = await Promise.all([
+      this.prisma.client.business.findMany({
+        where,
+        include: {
+          owner: {
+            select: { id: true, name: true, email: true },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.client.business.count({
+        where,
+      }),
+    ]);
+    const meta = new PaginationMetaDto(total, page, limit);
+
+    return new PaginatedResponseDto(businesses, meta);
   }
   async findOne(id: string) {
     const business = await this.prisma.client.business.findUnique({

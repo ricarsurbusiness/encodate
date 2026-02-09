@@ -10,6 +10,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -18,6 +19,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { FilterServiceDto } from './dto/filter-service.dto';
 
 @Controller()
 export class ServicesController {
@@ -39,9 +41,10 @@ export class ServicesController {
     );
   }
 
+
   @Get('businesses/:businessId/services')
-  async findAll(@Param('businessId') businessId: string) {
-    return this.servicesService.findAllByBusiness(businessId);
+  async findAll(@Param('businessId') businessId: string, @Query() filterServiceDto:FilterServiceDto ) {
+    return this.servicesService.findAllByBusiness(businessId, filterServiceDto);
   }
 
   @Get('services/:id')

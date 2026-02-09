@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { BusinessService } from './business.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -17,6 +18,7 @@ import { CreateBusinessDto } from './dto/create-business.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { SearchBusinessDto } from './dto/search-business.dto';
 
 @Controller('businesses')
 export class BusinessController {
@@ -33,8 +35,8 @@ export class BusinessController {
   }
 
   @Get()
-  async findAll() {
-    return this.businessService.findAll();
+  async findAll(@Query() searchBusinessDto: SearchBusinessDto) {
+    return this.businessService.findAll(searchBusinessDto);
   }
 
   @Get('my-businesses')

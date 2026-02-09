@@ -9,6 +9,7 @@ import {
   Param,
   UseGuards,
   Body,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -18,6 +19,8 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { PaginationDto } from 'src/common/dto/pagination.index';
+
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,8 +45,8 @@ export class UsersController {
 
   @Get()
   @Roles('ADMIN')
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.usersService.findAll(paginationDto);
   }
 
   @Get(':id')

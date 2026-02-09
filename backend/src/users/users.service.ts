@@ -10,6 +10,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { PaginatedResponseDto, PaginationDto, PaginationMetaDto } from 'src/common/dto/pagination.index';
 
 @Injectable()
 export class UsersService {
@@ -77,9 +78,10 @@ export class UsersService {
     return { message: 'Password changed successfully' };
   }
 
-  async findAll() {
-    try {
-      const users = await this.prisma.client.user.findMany({
+  async findAll(paginationDto: PaginationDto) {
+    const { page = 1, limit = 10 } = paginationDto;
+    const [users, total] = await Promise.all([
+      this.prisma.client.user.findMany({
         select: {
           id: true,
           email: true,
@@ -91,11 +93,13 @@ export class UsersService {
         orderBy: {
           createdAt: 'desc',
         },
-      });
-      return users;
-    } catch (error: any) {
-      throw error;
-    }
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.client.user.count(),
+    ]);
+    const meta = new PaginationMetaDto(total, page, limit);
+    return new PaginatedResponseDto(users, meta);
   }
 
   async findOne(id: string) {

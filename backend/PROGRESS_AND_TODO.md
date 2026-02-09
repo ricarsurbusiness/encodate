@@ -1,8 +1,8 @@
 # 📊 PROGRESO DEL PROYECTO Y TAREAS PENDIENTES
 
 **Proyecto:** Sistema de Reservas para Negocios  
-**Última actualización:** 2024  
-**Estado general:** En desarrollo activo - Fase 3 completada
+**Última actualización:** Febrero 2026  
+**Estado general:** En desarrollo activo - Fase 4 completada
 
 ---
 
@@ -10,18 +10,19 @@
 
 ### ✅ Completado hasta ahora
 
-- **3 Fases completadas** (Autenticación, Negocios, Servicios)
+- **4 Fases completadas** (Autenticación, Negocios, Servicios, Mejoras)
 - **22 Endpoints REST** implementados y funcionando
 - **5 Módulos** completos (Auth, Users, Business, Services, Prisma)
 - **Sistema de autorización** multi-nivel (JWT + Roles + Ownership)
+- **Paginación, búsqueda y filtros** implementados
 - **Base de datos** PostgreSQL con Prisma ORM
 - **Testing manual** completo y exitoso
 
 ### 🚧 Estado actual
 
-**Fase actual:** Fase 4 - Mejoras y Optimizaciones  
-**Tarea en curso:** Ownership Validation en Services  
-**Progreso de Fase 4:** 0% (Recién iniciando)
+**Fase actual:** Fase 5 - Módulo de Bookings  
+**Tarea en curso:** Creación de estructura del módulo  
+**Progreso de Fase 5:** 0% (Recién iniciando)
 
 ---
 
@@ -118,202 +119,68 @@ DELETE /services/:id
 
 ---
 
-## 🚧 FASE ACTUAL: FASE 4 - MEJORAS Y OPTIMIZACIONES
+### Fase 4: Mejoras y Optimizaciones ✓ COMPLETA
 
-**Objetivo:** Pulir el sistema existente antes de agregar Bookings  
-**Tiempo estimado total:** 6-8 horas  
-**Progreso:** 0/5 mejoras completadas
+**Fecha de completación:** Febrero 2026  
+**Tiempo invertido:** ~2.75 horas  
+**Documentación:** `PHASE_4_DOCUMENTATION.md`
 
----
+**Mejoras implementadas:**
+- ✅ Paginación en GET /businesses
+- ✅ Paginación en GET /businesses/:id/services
+- ✅ Paginación en GET /users (admin)
+- ✅ Búsqueda por nombre en businesses
+- ✅ Filtros por precio y duración en services
+- ✅ Ownership validation en services
 
-### Mejora 1: Ownership Validation en Services 🔄 EN CURSO
+**DTOs creados:**
+```
+src/common/dto/pagination.dto.ts
+src/common/dto/pagination-meta.dto.ts
+src/common/dto/paginated-response.dto.ts
+src/businesses/dto/search-business.dto.ts
+src/services/dto/filter-service.dto.ts
+```
 
-**Prioridad:** Alta (Seguridad)  
-**Tiempo estimado:** 45 minutos  
-**Progreso:** 0%
-
-**Problema:**
-Actualmente, cualquier STAFF puede editar/eliminar cualquier servicio, incluso si no es el dueño del negocio.
-
-**Solución:**
-Validar que el usuario sea el owner del negocio al que pertenece el servicio.
-
-**Cambios a realizar:**
-
-- [ ] **ServicesService.update:**
-  - [ ] Agregar parámetros `userId: string` y `userRole: string`
-  - [ ] Guardar resultado de `findOne` en variable
-  - [ ] Validar ownership: `if (service.business.ownerId !== userId && userRole !== 'ADMIN')`
-  - [ ] Lanzar `ForbiddenException` si no es owner ni admin
-
-- [ ] **ServicesService.remove:**
-  - [ ] Agregar parámetros `userId: string` y `userRole: string`
-  - [ ] Guardar resultado de `findOne` en variable
-  - [ ] Validar ownership (misma lógica que update)
-  - [ ] Lanzar `ForbiddenException` si no es owner ni admin
-
-- [ ] **ServicesService.findOne:**
-  - [ ] Agregar `ownerId: true` al select de business
-
-- [ ] **ServicesController.update:**
-  - [ ] Pasar `user.id` y `user.role` al service
-
-- [ ] **ServicesController.remove:**
-  - [ ] Pasar `user.id` y `user.role` al service
-
-- [ ] **Imports:**
-  - [ ] Verificar que `ForbiddenException` esté importado en service
-
-**Testing:**
-- [ ] Staff A crea servicio en su negocio → ✅ Puede editarlo
-- [ ] Staff B intenta editar servicio de Staff A → ❌ 403 Forbidden
-- [ ] ADMIN edita servicio de cualquiera → ✅ Puede editarlo
-- [ ] Staff A elimina su servicio → ✅ Puede eliminarlo
-- [ ] Staff B intenta eliminar servicio de Staff A → ❌ 403 Forbidden
+**Conceptos aprendidos:**
+- Paginación con skip/take (Prisma)
+- Queries paralelas con Promise.all
+- Herencia de DTOs (extends)
+- Where dinámico (construcción condicional)
+- Filtros de rango (gte, lte)
+- Mode insensitive (búsqueda sin case)
 
 ---
 
-### Mejora 2: Paginación ⏸️ PENDIENTE
+## 🚧 FASE ACTUAL: FASE 5 - MÓDULO DE BOOKINGS
 
-**Prioridad:** Media  
-**Tiempo estimado:** 1.5 horas  
-**Progreso:** 0%
-
-**Objetivo:**
-Implementar paginación en endpoints que devuelven listas grandes.
-
-**Endpoints a modificar:**
-- `GET /businesses`
-- `GET /businesses/:id/services`
-- `GET /users` (admin)
-
-**Tareas:**
-
-- [ ] **Crear PaginationDto:**
-  ```typescript
-  export class PaginationDto {
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    page?: number = 1;
-
-    @IsOptional()
-    @Type(() => Number)
-    @IsInt()
-    @Min(1)
-    @Max(100)
-    limit?: number = 10;
-  }
-  ```
-
-- [ ] **Crear PaginationMetaDto:**
-  ```typescript
-  export class PaginationMetaDto {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }
-  ```
-
-- [ ] **Crear PaginatedResponseDto:**
-  ```typescript
-  export class PaginatedResponseDto<T> {
-    data: T[];
-    meta: PaginationMetaDto;
-  }
-  ```
-
-- [ ] **Modificar BusinessService.findAll:**
-  - [ ] Agregar parámetro `paginationDto: PaginationDto`
-  - [ ] Calcular `skip = (page - 1) * limit`
-  - [ ] Agregar `skip` y `take` a query
-  - [ ] Hacer query de count total
-  - [ ] Devolver `{ data, meta }`
-
-- [ ] **Modificar BusinessController.findAll:**
-  - [ ] Agregar `@Query() paginationDto: PaginationDto`
-  - [ ] Pasar al service
-
-- [ ] Aplicar misma lógica a:
-  - [ ] `GET /businesses/:id/services`
-  - [ ] `GET /users` (admin)
-
-**Testing:**
-- [ ] `GET /businesses?page=1&limit=10` → Primera página
-- [ ] `GET /businesses?page=2&limit=10` → Segunda página
-- [ ] `GET /businesses` (sin params) → Usa defaults (page=1, limit=10)
-- [ ] Verificar metadata: `{ total, page, limit, totalPages }`
+**Objetivo:** Implementar el sistema de reservas  
+**Tiempo estimado total:** 8-10 horas  
+**Progreso:** 0/6 endpoints completados
 
 ---
 
-### Mejora 3: Búsqueda y Filtros ⏸️ PENDIENTE
+### Endpoints a implementar:
 
-**Prioridad:** Media  
-**Tiempo estimado:** 1.5 horas  
-**Progreso:** 0%
+- [ ] `POST /bookings` - Crear reserva
+- [ ] `GET /bookings/my` - Mis reservas (cliente)
+- [ ] `GET /businesses/:id/bookings` - Reservas del negocio
+- [ ] `GET /bookings/:id` - Detalle de reserva
+- [ ] `PATCH /bookings/:id/status` - Cambiar estado
+- [ ] `DELETE /bookings/:id` - Cancelar reserva
 
-**Objetivo:**
-Permitir búsqueda y filtrado de recursos.
+### Conceptos nuevos a aprender:
 
-**Funcionalidades:**
-
-- [ ] **Búsqueda de negocios por nombre:**
-  - [ ] `GET /businesses?search=barbería`
-  - [ ] Query Prisma con `where: { name: { contains: search, mode: 'insensitive' } }`
-
-- [ ] **Filtrar servicios por precio:**
-  - [ ] `GET /services?minPrice=10&maxPrice=50`
-  - [ ] Query Prisma con `where: { price: { gte: minPrice, lte: maxPrice } }`
-
-- [ ] **Filtrar servicios por duración:**
-  - [ ] `GET /services?maxDuration=60`
-  - [ ] Query Prisma con `where: { duration: { lte: maxDuration } }`
-
-- [ ] **Combinar filtros:**
-  - [ ] `GET /services?minPrice=10&maxPrice=50&maxDuration=60`
-
-**DTOs a crear:**
-
-- [ ] `SearchBusinessDto`:
-  ```typescript
-  export class SearchBusinessDto {
-    @IsOptional()
-    @IsString()
-    search?: string;
-  }
-  ```
-
-- [ ] `FilterServiceDto`:
-  ```typescript
-  export class FilterServiceDto {
-    @IsOptional()
-    @Type(() => Number)
-    @Min(0)
-    minPrice?: number;
-
-    @IsOptional()
-    @Type(() => Number)
-    @Min(0)
-    maxPrice?: number;
-
-    @IsOptional()
-    @Type(() => Number)
-    @Min(1)
-    maxDuration?: number;
-  }
-  ```
-
-**Testing:**
-- [ ] Buscar "barbería" → Encuentra negocios con "barbería" en nombre
-- [ ] Filtrar precio 10-50 → Solo servicios en ese rango
-- [ ] Filtrar duración máx 60 → Solo servicios <= 60 min
-- [ ] Combinar filtros → Resultados cumplen todos los criterios
+- Validación de disponibilidad
+- Manejo de fechas y horas
+- Estados de reserva (PENDING, CONFIRMED, CANCELLED, COMPLETED)
+- Conflictos de horarios
 
 ---
 
-### Mejora 4: Swagger Documentation ⏸️ PENDIENTE
+## 📋 MEJORAS PENDIENTES (OPCIONALES)
+
+### Mejora: Swagger Documentation ⏸️ PENDIENTE
 
 **Prioridad:** Baja (pero muy útil)  
 **Tiempo estimado:** 2 horas  
