@@ -5,5 +5,6 @@ import { createParamDecorator } from '@nestjs/common';
 
 export const CurrentUser = createParamDecorator((data, ctx) => {
   const request = ctx.switchToHttp().getRequest();
-  return request.user;
+  const user = request.user;
+  return data ? user?.[data] : user;
 });

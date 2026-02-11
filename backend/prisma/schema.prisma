@@ -40,6 +40,7 @@ model User {
   ownedBusinesses Business[] @relation("BusinessOwner")
   staffBusinesses Business[] @relation("BusinessStaff")
   bookings        Booking[]
+  refreshToken    RefreshToken[]
 
   @@map("users")
 }
@@ -96,4 +97,18 @@ model Booking {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("bookings")
+}
+
+model RefreshToken{
+  id          String   @id @default(uuid())
+  token       String   @unique
+  userId      String   @map("user_id")
+  expiresAt   DateTime @map("expires_at")
+  isRevoked   Boolean  @default(false) @map("is_revoked")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }

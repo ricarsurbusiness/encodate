@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   ConflictException,
@@ -10,6 +12,8 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { Role } from 'src/generated/enums';
 import * as bcrypt from 'bcrypt';
+import { RefreshTokenService } from './refresh-token.service';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 type UserPayload = {
   id: string;
@@ -22,6 +26,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private refreshTokenService: RefreshTokenService,
   ) {}
   async register(registerDto: RegisterDto) {
     const { email, password, name, phone } = registerDto;
@@ -45,11 +50,7 @@ export class AuthService {
         role: Role.CLIENT,
       },
     });
-
-    const token = this.generateToken(user);
-
     const response = new AuthResponseDto();
-    response.accessToken = token;
     response.user = {
       id: user.id,
       email: user.email,
@@ -83,11 +84,12 @@ export class AuthService {
     }
 
     // 5. Generar token
-    const token = this.generateToken(user);
+    const { accessToken, refreshToken } = await this.generateTokens(user);
 
     // 6. Devolver respuesta
     const response = new AuthResponseDto();
-    response.accessToken = token;
+    response.accessToken = accessToken;
+    response.refreshToken = refreshToken;
     response.user = {
       id: user.id,
       email: user.email,
@@ -97,12 +99,55 @@ export class AuthService {
     };
     return response;
   }
-  private generateToken(user: UserPayload): string {
+  private async generateTokens(user: UserPayload) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
     };
-    return this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      user.id,
+    );
+    return { accessToken, refreshToken };
+  }
+  async refresh(refreshTokenDto: RefreshTokenDto) {
+    const { refreshToken } = refreshTokenDto;
+    const tokenRecord =
+      await this.refreshTokenService.validateRefreshToken(refreshToken);
+    const user = await this.prisma.client.user.findUnique({
+      where: { id: tokenRecord.userId },
+    });
+    if (!user) {
+      throw new UnauthorizedException('user not found');
+    }
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    const accessToken = this.jwtService.sign(payload);
+    return { accessToken };
+  }
+  async logout(refreshTokenDto: RefreshTokenDto) {
+    //Extraer token
+    const { refreshToken } = refreshTokenDto;
+
+    //Revocar el token
+    await this.refreshTokenService.revokeRefreshToken(refreshToken);
+
+    //Devolver confirmación
+    return {
+      message: 'Logged out successfully',
+    };
+  }
+  async logoutAll(userId: string) {
+    //Revocar todos los tokens del usuario
+    await this.refreshTokenService.revokeAllUserTokens(userId);
+
+    //Devolver confirmación
+    return {
+      message: 'All sessions closed successfully',
+    };
   }
 }
