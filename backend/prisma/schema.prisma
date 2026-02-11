@@ -82,13 +82,12 @@ model Service {
 
 model Booking {
   id        String        @id @default(uuid())
-  date      DateTime
-  time      String
+  startTime DateTime      @map("start_time")
+  endTime   DateTime      @map("end_time")
   status    BookingStatus @default(PENDING)
   notes     String?
   serviceId String        @map("service_id")
   userId    String        @map("user_id")
-  staffId   String?       @map("staff_id")
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
 

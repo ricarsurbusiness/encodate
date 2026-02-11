@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   ConflictException,
   ForbiddenException,
@@ -47,7 +49,7 @@ export class BusinessService {
   async findAll(searchBusinessDto: SearchBusinessDto) {
     const { page = 1, limit = 10, search } = searchBusinessDto;
     const where: any = { isActive: true };
-    if(search){
+    if (search) {
       where.name = { contains: search, mode: 'insensitive' }; //mode: 'insensitive' para búsque sin importar mayúsculas/minúsculas
     }
 

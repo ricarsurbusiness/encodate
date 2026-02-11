@@ -41,9 +41,11 @@ export class ServicesController {
     );
   }
 
-
   @Get('businesses/:businessId/services')
-  async findAll(@Param('businessId') businessId: string, @Query() filterServiceDto:FilterServiceDto ) {
+  async findAll(
+    @Param('businessId') businessId: string,
+    @Query() filterServiceDto: FilterServiceDto,
+  ) {
     return this.servicesService.findAllByBusiness(businessId, filterServiceDto);
   }
 

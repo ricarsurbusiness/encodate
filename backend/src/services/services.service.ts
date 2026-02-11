@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable no-useless-catch */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ForbiddenException,
   Injectable,
@@ -8,7 +9,10 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { PaginatedResponseDto,PaginationMetaDto } from 'src/common/dto/pagination.index';
+import {
+  PaginatedResponseDto,
+  PaginationMetaDto,
+} from 'src/common/dto/pagination.index';
 import { FilterServiceDto } from './dto/filter-service.dto';
 
 @Injectable()
@@ -48,33 +52,42 @@ export class ServicesService {
       throw error;
     }
   }
-  async findAllByBusiness(businessId: string, filterServiceDto: FilterServiceDto) {
-    const { page = 1, limit = 10, minPrice, maxPrice, maxDuration } = filterServiceDto;
+  async findAllByBusiness(
+    businessId: string,
+    filterServiceDto: FilterServiceDto,
+  ) {
+    const {
+      page = 1,
+      limit = 10,
+      minPrice,
+      maxPrice,
+      maxDuration,
+    } = filterServiceDto;
     const where: any = { businessId };
 
-// Filtro de precio (rango)
-  if (minPrice !== undefined || maxPrice !== undefined) {
-    where.price = {};
-    if (minPrice !== undefined) where.price.gte = minPrice; 
-    if (maxPrice !== undefined) where.price.lte = maxPrice; 
-  }
+    // Filtro de precio (rango)
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price.gte = minPrice;
+      if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
 
-// Filtro de duración
-  if (maxDuration !== undefined) {
-    where.duration = { lte: maxDuration };
-  }
-    const [services , total] = await Promise.all([
+    // Filtro de duración
+    if (maxDuration !== undefined) {
+      where.duration = { lte: maxDuration };
+    }
+    const [services, total] = await Promise.all([
       this.prisma.client.service.findMany({
-      where,
-      include: {
-        business: {
-          select: { id: true, name: true },
+        where,
+        include: {
+          business: {
+            select: { id: true, name: true },
+          },
         },
-      },
-      orderBy: { name: 'asc' },
-      skip: (page - 1) * limit,
-      take: limit,
-    }),
+        orderBy: { name: 'asc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
       this.prisma.client.service.count({
         where,
       }),
