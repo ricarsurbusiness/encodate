@@ -119,13 +119,11 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('user not found');
     }
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
-    const accessToken = this.jwtService.sign(payload);
-    return { accessToken };
+    await this.refreshTokenService.revokeRefreshToken(refreshToken);
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this.generateTokens(user);
+    return { accessToken, refreshToken: newRefreshToken };
   }
   async logout(refreshTokenDto: RefreshTokenDto) {
     //Extraer token

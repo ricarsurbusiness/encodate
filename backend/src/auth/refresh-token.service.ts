@@ -30,7 +30,6 @@ export class RefreshTokenService {
     //  todos los tokens activos (no revocados, no expirados)
     const tokens = await this.prisma.client.refreshToken.findMany({
       where: {
-        isRevoked: false,
         expiresAt: { gt: new Date() },
       },
     });
@@ -41,24 +40,42 @@ export class RefreshTokenService {
 
       if (isValid) {
         // Token válido encontrado
+        if (tokenRecord.isRevoked) {
+          console.error(
+            `[Security] 🚨 Refresh token reuse detected for user ${tokenRecord.userId}`,
+          );
+          await this.revokeAllUserTokens(tokenRecord.userId);
+
+          throw new UnauthorizedException(
+            'Token reuse detected. All sessions have been revoked for security.',
+          );
+        }
         return tokenRecord;
       }
     }
-
     // No se encontró match
     throw new UnauthorizedException('Invalid refresh token');
   }
 
   //Revocar un token específico
   async revokeRefreshToken(token: string): Promise<void> {
-    //Encontrar el token
-    const tokenRecord = await this.validateRefreshToken(token);
-
-    //Marcarlo como revocado
-    await this.prisma.client.refreshToken.update({
-      where: { id: tokenRecord.id },
-      data: { isRevoked: true },
+    const allTokens = await this.prisma.client.refreshToken.findMany({
+      where: {
+        expiresAt: { gt: new Date() },
+      },
     });
+
+    for (const tokenRecord of allTokens) {
+      const isValid = await bcrypt.compare(token, tokenRecord.token);
+      if (isValid) {
+        await this.prisma.client.refreshToken.update({
+          where: { id: tokenRecord.id },
+          data: { isRevoked: true },
+        });
+        return;
+      }
+    }
+    throw new UnauthorizedException('Invalid refresh token');
   }
 
   // Revocar todos los tokens de un usuario
