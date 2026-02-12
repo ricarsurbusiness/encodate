@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class RefreshTokenService {
@@ -66,5 +67,21 @@ export class RefreshTokenService {
       where: { userId },
       data: { isRevoked: true },
     });
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async cleanExpiredTokens() {
+    //Eliminar tokens expirados
+    const result = await this.prisma.client.refreshToken.deleteMany({
+      where: {
+        expiresAt: {
+          lt: new Date(), // lt = less than (menor que)
+        },
+      },
+    });
+
+    //Log de cuántos se eliminaron
+    console.log(`[Cron] Cleaned ${result.count} expired refresh tokens`);
+    return result.count;
   }
 }

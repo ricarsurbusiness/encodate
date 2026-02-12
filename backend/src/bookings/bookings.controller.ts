@@ -17,12 +17,14 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { ChangeStatusDto, FilterBookingDto } from './dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
+  @Throttle({ default: { ttl: 60000, limit: 6 } })
   @Post()
   create(
     @Body() createBookingDto: CreateBookingDto,
