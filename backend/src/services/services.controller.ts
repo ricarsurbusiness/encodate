@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-
 import {
   Controller,
   Get,
@@ -17,14 +17,30 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
 import { FilterServiceDto } from './dto/filter-service.dto';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
-@Controller()
+@ApiTags('services')
+@Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @ApiOperation({
+    summary: 'Crear nuevo servicio',
+    description: 'Crea un nuevo servicio para un negocio específico',
+  })
+  @ApiResponse({ status: 201, description: 'Servicio creado exitosamente' })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'Sin permisos' })
+  @ApiResponse({ status: 404, description: 'Negocio no encontrado' })
+  @ApiBearerAuth('JWT-auth')
   @Post('businesses/:businessId/services')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'STAFF')
@@ -41,6 +57,16 @@ export class ServicesController {
     );
   }
 
+  @ApiOperation({
+    summary: 'Listar servicios de un negocio',
+    description:
+      'Devuelve una lista paginada y filtrada de servicios de un negocio',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de servicios obtenida exitosamente',
+  })
+  @ApiResponse({ status: 404, description: 'Negocio no encontrado' })
   @Get('businesses/:businessId/services')
   async findAll(
     @Param('businessId') businessId: string,
