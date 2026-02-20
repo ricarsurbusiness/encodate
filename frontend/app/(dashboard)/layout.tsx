@@ -25,7 +25,7 @@ export default function DashboardLayout({
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
-    router.push("/login");
+    router.push("/");
   };
   if (isLoading) {
     return <div>Loading...</div>;

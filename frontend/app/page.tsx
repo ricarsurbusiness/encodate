@@ -1,23 +1,34 @@
-import Link from "next/link";
+import { BusinessCard } from "@/components/ui/BusinessCard";
+import { HeroSection } from "@/components/ui/HeroSection";
+import { Navbar } from "@/components/ui/Navbar";
 
-export default function Home() {
+interface Business {
+  id: string;
+  name: string;
+  description?: string;
+  address?: string;
+  phone?: string;
+}
+export default async function Home() {
+  const businesses = await (async () => {
+    const response = await fetch("http://localhost:3000/businesses");
+    const json = await response.json();
+    return json.data;
+  })();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center gap-12 justify-center py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <h1 className="text-4xl font-bold">Encodate</h1>
-        <div className="flex flex-col items-center justify-center gap-4">
-          <Link
-            href="/login"
-            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-          >
-            Register
-          </Link>
+    <div className="min-h-screen bg-zinc-50">
+      <Navbar />
+      <main className="max-w-6xl mx-auto px-8 py-12">
+        <HeroSection />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+          {businesses.map((business: Business) => (
+            <BusinessCard
+              key={business.id}
+              name={business.name}
+              description={business.description}
+              address={business.address}
+            />
+          ))}
         </div>
       </main>
     </div>
