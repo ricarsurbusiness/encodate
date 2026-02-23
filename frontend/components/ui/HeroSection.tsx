@@ -3,12 +3,12 @@ export const HeroSection = () => {
   return (
     <div className="flex flex-col py-20 px-4 bg-gray-50 text-center">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-4">Find and book at the best</h1>
+        <h1 className="text-4xl font-bold mb-4">Encuentra y reserva en los mejores</h1>
         <h1 className="text-4xl text-blue-700 font-bold mb-4">
-          local businesses
+           negocios locales
         </h1>
         <h3 className="text-xl text-gray-600 mb-4 pt-3 pb-2">
-          Discover the best local businesses near you
+          Descubre los mejores negocios locales cerca de ti
         </h3>
       </div>
      {/* Search Bar */}
