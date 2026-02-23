@@ -1,6 +1,8 @@
 import { BusinessList } from "@/components/ui/BusinessListt";
 import { HeroSection } from "@/components/ui/HeroSection";
 import { Navbar } from "@/components/ui/Navbar";
+import { CTASection } from "@/components/ui/CtaSection";
+import { Footer } from "@/components/ui/Footer";
 
 
 
@@ -12,6 +14,9 @@ export default async function Home() {
         <HeroSection />
         <BusinessList />
       </main>
+        <CTASection />
+      | <Footer />
+
     </div>
   );
 }
