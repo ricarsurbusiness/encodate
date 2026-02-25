@@ -373,6 +373,7 @@ export class BookingsService {
       },
     });
   }
+
   async cancel(id: string, userId: string, userRole: string) {
     const booking = await this.findOne(id);
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   Controller,
   Get,
@@ -6,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -178,7 +176,7 @@ export class BookingsController {
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @ApiResponse({ status: 404, description: 'Reserva no encontrada' })
-  @Delete(':id')
+  @Patch(':id/cancel')
   cancel(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
