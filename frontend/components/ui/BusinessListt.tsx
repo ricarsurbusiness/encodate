@@ -25,14 +25,15 @@ export const BusinessList = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:3000/businesses?page=${currentPage}&limit=${SIZE_PAGE}`
+          `http://localhost:3000/businesses?page=${currentPage}&limit=${SIZE_PAGE}`,
         );
         const json = await response.json();
         console.log("API response:", json);
+
         if (!json.data || !json.meta) {
-  console.error("Respuesta inesperada de la API:", json);
-  return;
-}
+          console.error("Respuesta inesperada de la API:", json);
+          return;
+        }
         setBusinesses(json.data);
         setTotalPages(json.meta.totalPages);
       } catch (error) {
@@ -66,6 +67,7 @@ export const BusinessList = () => {
         {businesses.map((business) => (
           <BusinessCard
             key={business.id}
+            id={business.id}
             name={business.name}
             description={business.description}
             address={business.address}
