@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import UpdateBookingModal from "./UpdateBookingModal";
+import { Booking } from "@/types/booking";
 
 interface Props {
-  booking: any;
+  booking: Booking;
   onUpdateSuccess: (updatedBooking: any) => void;
 }
 

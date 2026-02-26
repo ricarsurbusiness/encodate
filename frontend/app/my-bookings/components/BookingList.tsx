@@ -21,7 +21,7 @@ export default function BookingList({
   if (!bookings.length) {
     return (
       <div className="text-center text-gray-500 mt-10">
-        You don’t have any bookings yet.
+        No tienes reservas aún.
       </div>
     );
   }
