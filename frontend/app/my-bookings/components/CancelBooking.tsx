@@ -36,9 +36,9 @@ export const CancelBookingButton = ({
     <button
       onClick={handleCancel}
       disabled={loading}
-      className="mt-3 text-red-500 hover:text-red-700 text-sm font-medium transition disabled:opacity-50"
+      className="text-red-500 hover:text-red-700 transition"
     >
-      {loading ? "Canceling..." : "Cancel Booking"}
+      {loading ? "Canceling..." : "Cancelar reserva"}
     </button>
   );
 };

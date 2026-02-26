@@ -8,6 +8,7 @@ interface Props {
   meta: BookingMeta;
   onPageChange: (page: number) => void;
   onCancelSuccess: (bookingId: string) => void;
+  onUpdateSuccess: (updatedBooking: Booking) => void;
 }
 
 export default function BookingList({
@@ -15,6 +16,7 @@ export default function BookingList({
   meta,
   onPageChange,
   onCancelSuccess,
+  onUpdateSuccess,
 }: Props) {
   if (!bookings.length) {
     return (
@@ -32,6 +34,7 @@ export default function BookingList({
             key={booking.id}
             booking={booking}
             onCancelSuccess={onCancelSuccess}
+            onUpdateSuccess={onUpdateSuccess}
           />
         ))}
       </div>

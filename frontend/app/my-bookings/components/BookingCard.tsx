@@ -1,13 +1,19 @@
 import BookingStatusBadge from "./BookingStatusBadge";
 import { CancelBookingButton } from "./CancelBooking";
+import { UpdateBookingButton } from "./UpdateBooking";
 import { Booking } from "@/types/booking";
 
 interface Props {
   booking: Booking;
   onCancelSuccess: (bookingId: string) => void;
+  onUpdateSuccess: (updatedBooking: Booking) => void;
 }
 
-export default function BookingCard({ booking, onCancelSuccess }: Props) {
+export default function BookingCard({
+  booking,
+  onCancelSuccess,
+  onUpdateSuccess,
+}: Props) {
   const date = new Date(booking.startTime);
 
   return (
@@ -27,10 +33,15 @@ export default function BookingCard({ booking, onCancelSuccess }: Props) {
       </div>
 
       {booking.status === "PENDING" && (
-        <div className="mt-4">
+        <div className="mt-6 flex gap-6 text-sm font-medium">
           <CancelBookingButton
             bookingId={booking.id}
             onCancelSuccess={onCancelSuccess}
+          />
+
+          <UpdateBookingButton
+            booking={booking}
+            onUpdateSuccess={onUpdateSuccess}
           />
         </div>
       )}

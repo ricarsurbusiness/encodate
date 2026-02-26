@@ -460,7 +460,7 @@ export class BookingsService {
 
     if (conflicts.length > 0) {
       throw new ConflictException(
-        'This time slot is not available. Please choose another time.',
+        'Este horario no está disponible. Por favor, elija otro horario.',
       );
     }
 

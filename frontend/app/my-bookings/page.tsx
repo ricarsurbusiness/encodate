@@ -18,7 +18,11 @@ export default function MyBookingsPage() {
       ),
     );
   };
-
+  const handleUpdate = (updatedBooking: any) => {
+    setBookings((prev) =>
+      prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)),
+    );
+  };
   const fetchBookings = async (pageNumber: number) => {
     try {
       setLoading(true);
@@ -53,6 +57,7 @@ export default function MyBookingsPage() {
         meta={meta}
         onPageChange={setPage}
         onCancelSuccess={handleCancel}
+        onUpdateSuccess={handleUpdate}
       />
     </div>
   );
