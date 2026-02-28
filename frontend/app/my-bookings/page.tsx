@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import BookingList from "./components/BookingList";
+import Link from "next/link";
 
 export default function MyBookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -48,9 +49,16 @@ export default function MyBookingsPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-12 px-6">
-      <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
+      {/* Back button */}
+      <div className="mb-6">
+        <Link href="/" className="text-sm text-blue-600 hover:underline">
+          ← Volver al inicio
+        </Link>
+      </div>
+
+      <h1 className="text-3xl font-bold mb-8 text-center">Mis reservas</h1>
       <p className="text-sm text-gray-500 mb-6">
-        Viendo {bookings.length} de {meta?.total ?? 0} bookings
+        Viendo {bookings.length} de {meta?.total ?? 0} reservas
       </p>
       <BookingList
         bookings={bookings}
