@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   LayoutDashboard,
   Building2,
@@ -12,6 +11,7 @@ import {
   Users,
   User,
   LogOut,
+  Loader2,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -19,12 +19,25 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { logout } = useAuth();
+  const { logout, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
+  // Auth guard — defense-in-depth behind middleware
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    router.push("/login");
+    return null;
+  }
+
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -32,7 +45,6 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md p-6 flex flex-col justify-between">
         <div>
-          <Image></Image>
           <h2 className="text-2xl font-bold mb-10">ENCODATE</h2>
 
           <nav className="space-y-4">

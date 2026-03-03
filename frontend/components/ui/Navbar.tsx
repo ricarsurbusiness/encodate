@@ -2,10 +2,32 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, loading } = useAuth();
+
+  // Show minimal navbar while auth state is loading
+  if (loading) {
+    return (
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logoEncodate.png"
+                alt="ENCODATE logo"
+                width={50}
+                height={50}
+              />
+              <h1 className="font-bold text-lg">ENCODATE</h1>
+            </div>
+            <div className="h-8 w-24 bg-gray-200 animate-pulse rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-sm">

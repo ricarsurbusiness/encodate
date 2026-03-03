@@ -1,63 +1,97 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Suspense, useState } from "react";
+import { AxiosError } from "axios";
+import api from "@/lib/axios";
+import { useAuth } from "@/context/AuthContext";
+import type { AuthResponse } from "@/types/auth";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+// ─── Zod schema ──────────────────────────────────────────────────────────────
+const loginSchema = z.object({
+  email: z.string().email("Ingresa un email válido"),
+  password: z.string().min(1, "La contraseña es obligatoria"),
+});
 
+type LoginFormData = z.infer<typeof loginSchema>;
+
+// ─── Page wrapper (Suspense boundary for useSearchParams) ────────────────────
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center py-8">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+// ─── Inner form component ────────────────────────────────────────────────────
+function LoginForm() {
+  const [serverError, setServerError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  const registered = searchParams.get("registered");
+  const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (formData: LoginFormData) => {
+    setServerError("");
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Invalid credentials");
-      }
-
-      const data = await response.json();
-
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
+      const { data } = await api.post<AuthResponse>("/auth/login", formData);
+      login(data.user, data.accessToken, data.refreshToken);
       router.push(redirect || "/");
     } catch (err) {
-      setError("Email o contraseña incorrectos");
-    } finally {
-      setLoading(false);
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) {
+          setServerError("Email o contraseña incorrectos");
+        } else if (err.response?.status === 429) {
+          setServerError("Demasiados intentos. Intenta de nuevo más tarde.");
+        } else {
+          setServerError("Error del servidor. Intenta de nuevo.");
+        }
+      } else {
+        setServerError("No se pudo conectar con el servidor.");
+      }
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      {registered && (
+        <div className="bg-green-50 border border-green-200 text-green-700 text-sm p-3 rounded-lg">
+          ¡Cuenta creada exitosamente! Inicia sesión.
+        </div>
+      )}
+
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label className="text-sm text-gray-600">Email</label>
           <input
             className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...register("email")}
           />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+          )}
         </div>
 
         <div>
@@ -65,24 +99,27 @@ export default function Login() {
           <input
             className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+            {...register("password")}
           />
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
-        {error && (
+        {serverError && (
           <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-2 rounded-lg">
-            {error}
+            {serverError}
           </div>
         )}
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={isSubmitting}
           className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50"
         >
-          {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+          {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>
       </form>
 

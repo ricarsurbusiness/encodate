@@ -1,68 +1,80 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+import { AxiosError } from "axios";
+import api from "@/lib/axios";
 
+// ─── Zod schema ──────────────────────────────────────────────────────────────
+const registerSchema = z
+  .object({
+    name: z.string().min(1, "El nombre es obligatorio"),
+    email: z.string().email("Ingresa un email válido"),
+    password: z
+      .string()
+      .min(8, "La contraseña debe tener al menos 8 caracteres"),
+    confirmPassword: z.string().min(1, "Confirma tu contraseña"),
+    phone: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
+
+type RegisterFormData = z.infer<typeof registerSchema>;
+
+// ─── Component ───────────────────────────────────────────────────────────────
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  const [serverError, setServerError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
 
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
+  const onSubmit = async (formData: RegisterFormData) => {
+    setServerError("");
 
     try {
-      setLoading(true);
-
-      const response = await fetch("http://localhost:3000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password, phone }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error en el registro");
-      }
-
-      router.push("/login");
+      // Strip confirmPassword before sending
+      const { confirmPassword: _, ...payload } = formData;
+      await api.post("/auth/register", payload);
+      router.push("/login?registered=true");
     } catch (err) {
-      setError("No se pudo completar el registro");
-    } finally {
-      setLoading(false);
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 409) {
+          setServerError("Este email ya está registrado.");
+        } else {
+          setServerError(
+            err.response?.data?.message || "No se pudo completar el registro.",
+          );
+        }
+      } else {
+        setServerError("No se pudo conectar con el servidor.");
+      }
     }
   };
 
   return (
-    <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <label className="text-sm text-gray-600">Nombre</label>
         <input
           className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="text"
-          value={name}
-          required
-          onChange={(e) => setName(e.target.value)}
+          {...register("name")}
         />
+        {errors.name && (
+          <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+        )}
       </div>
 
       <div>
@@ -70,10 +82,11 @@ export default function RegisterPage() {
         <input
           className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
+          {...register("email")}
         />
+        {errors.email && (
+          <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+        )}
       </div>
 
       <div>
@@ -81,10 +94,11 @@ export default function RegisterPage() {
         <input
           className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="password"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
+          {...register("password")}
         />
+        {errors.password && (
+          <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+        )}
       </div>
 
       <div>
@@ -92,10 +106,13 @@ export default function RegisterPage() {
         <input
           className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="password"
-          value={confirmPassword}
-          required
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          {...register("confirmPassword")}
         />
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.confirmPassword.message}
+          </p>
+        )}
       </div>
 
       <div>
@@ -103,23 +120,22 @@ export default function RegisterPage() {
         <input
           className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          {...register("phone")}
         />
       </div>
 
-      {error && (
+      {serverError && (
         <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-2 rounded-lg">
-          {error}
+          {serverError}
         </div>
       )}
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={isSubmitting}
         className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50"
       >
-        {loading ? "Creando cuenta..." : "Crear cuenta"}
+        {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
       </button>
 
       <div className="text-center text-sm text-gray-500 mt-2">

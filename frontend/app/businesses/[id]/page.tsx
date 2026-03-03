@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/axios";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/context/AuthContext";
 import { useSearchParams } from "next/navigation";
 
 interface Business {
