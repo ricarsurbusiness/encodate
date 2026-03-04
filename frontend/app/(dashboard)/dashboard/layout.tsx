@@ -11,14 +11,16 @@ import {
   User,
   LogOut,
   Loader2,
+  Shield,
 } from "lucide-react";
+import { Role } from "@/types/auth";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { logout, loading, isAuthenticated } = useAuth();
+  const { logout, loading, isAuthenticated, user } = useAuth();
   const router = useRouter();
 
   // Auth guard — defense-in-depth behind middleware
@@ -93,6 +95,16 @@ export default function DashboardLayout({
               <User size={18} />
               Profile
             </Link>
+
+            {user?.role === Role.ADMIN && (
+              <Link
+                href="/dashboard/admin/users"
+                className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
+              >
+                <Shield size={18} />
+                Admin – Usuarios
+              </Link>
+            )}
           </nav>
         </div>
 
