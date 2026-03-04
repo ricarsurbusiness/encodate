@@ -1,5 +1,13 @@
-import {Search} from 'lucide-react';
-export const HeroSection = () => {
+"use client";
+
+import { Search, X } from "lucide-react";
+
+interface HeroSectionProps {
+  value: string;
+  onChange: (query: string) => void;
+}
+
+export const HeroSection = ({ value, onChange }: HeroSectionProps) => {
   return (
     <div className="flex flex-col py-20 px-4 bg-gray-50 text-center">
       <div className="flex flex-col items-center justify-center">
@@ -19,13 +27,21 @@ export const HeroSection = () => {
 
           <input
             type="text"
-            placeholder="Search for businesses"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Buscar negocios..."
             className="flex-1 outline-none bg-transparent"
           />
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition">
-            Search
-          </button>
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="text-gray-400 hover:text-gray-600 mr-2 transition"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
       </div>
     </div>
