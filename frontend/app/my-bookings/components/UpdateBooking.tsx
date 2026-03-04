@@ -6,10 +6,9 @@ import { Booking } from "@/types/booking";
 
 interface Props {
   booking: Booking;
-  onUpdateSuccess: (updatedBooking: any) => void;
 }
 
-export const UpdateBookingButton = ({ booking, onUpdateSuccess }: Props) => {
+export const UpdateBookingButton = ({ booking }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -25,7 +24,6 @@ export const UpdateBookingButton = ({ booking, onUpdateSuccess }: Props) => {
         <UpdateBookingModal
           booking={booking}
           onClose={() => setOpen(false)}
-          onUpdateSuccess={onUpdateSuccess}
         />
       )}
     </>

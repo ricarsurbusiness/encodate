@@ -1,22 +1,19 @@
 /** eslint-disable @typescript-eslint/no-explicit-any */
 import BookingCard from "./BookingCard";
 import { Pagination } from "@/components/ui/Pagination";
-import { Booking, BookingMeta } from "@/types/booking";
+import { Booking } from "@/types/booking";
+import type { PaginationMeta } from "@/types/common";
 
 interface Props {
   bookings: Booking[];
-  meta: BookingMeta;
+  meta: PaginationMeta;
   onPageChange: (page: number) => void;
-  onCancelSuccess: (bookingId: string) => void;
-  onUpdateSuccess: (updatedBooking: Booking) => void;
 }
 
 export default function BookingList({
   bookings,
   meta,
   onPageChange,
-  onCancelSuccess,
-  onUpdateSuccess,
 }: Props) {
   if (!bookings.length) {
     return (
@@ -30,12 +27,7 @@ export default function BookingList({
     <>
       <div className="space-y-6">
         {bookings.map((booking) => (
-          <BookingCard
-            key={booking.id}
-            booking={booking}
-            onCancelSuccess={onCancelSuccess}
-            onUpdateSuccess={onUpdateSuccess}
-          />
+          <BookingCard key={booking.id} booking={booking} />
         ))}
       </div>
 

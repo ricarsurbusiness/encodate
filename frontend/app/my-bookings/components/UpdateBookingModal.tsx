@@ -1,41 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import api from "@/lib/axios";
+import { useUpdateBooking } from "@/hooks/useBookings";
+import { toast } from "sonner";
+import type { Booking } from "@/types/booking";
 
 interface Props {
-  booking: any;
+  booking: Booking;
   onClose: () => void;
-  onUpdateSuccess: (updatedBooking: any) => void;
 }
 
-export default function UpdateBookingModal({
-  booking,
-  onClose,
-  onUpdateSuccess,
-}: Props) {
+export default function UpdateBookingModal({ booking, onClose }: Props) {
   const [notes, setNotes] = useState(booking.notes || "");
   const [startTime, setStartTime] = useState(
     new Date(booking.startTime).toISOString().slice(0, 16),
   );
-  const [loading, setLoading] = useState(false);
+  const { mutate, isPending } = useUpdateBooking(booking.id);
 
-  const handleUpdate = async () => {
-    try {
-      setLoading(true);
-
-      const { data } = await api.patch(`/bookings/${booking.id}`, {
-        startTime,
-        notes,
-      });
-
-      onUpdateSuccess(data);
-      onClose();
-    } catch (error: any) {
-      alert(error?.response?.data?.message || "Error updating booking");
-    } finally {
-      setLoading(false);
-    }
+  const handleUpdate = () => {
+    mutate(
+      { startTime, notes },
+      {
+        onSuccess: () => {
+          toast.success("Reserva actualizada exitosamente");
+          onClose();
+        },
+        onError: (error) => {
+          const message =
+            (error.response?.data as { message?: string })?.message ||
+            "Error al actualizar la reserva";
+          toast.error(message);
+        },
+      },
+    );
   };
 
   return (
@@ -72,10 +69,10 @@ export default function UpdateBookingModal({
 
           <button
             onClick={handleUpdate}
-            disabled={loading}
+            disabled={isPending}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {isPending ? "Guardando..." : "Guardar cambios"}
           </button>
         </div>
       </div>

@@ -1,44 +1,37 @@
 "use client";
-import { useState } from "react";
-import api from "@/lib/axios";
+import { useCancelBooking } from "@/hooks/useBookings";
+import { toast } from "sonner";
 
 interface CancelBookingButtonProps {
   bookingId: string;
-  onCancelSuccess: (bookingId: string) => void;
 }
 
 export const CancelBookingButton = ({
   bookingId,
-  onCancelSuccess,
 }: CancelBookingButtonProps) => {
-  const [loading, setLoading] = useState(false);
+  const { mutate, isPending } = useCancelBooking();
 
-  const handleCancel = async () => {
-    const confirmCancel = confirm("Estas seguro de cancelar esta reserva?");
-
+  const handleCancel = () => {
+    const confirmCancel = confirm("¿Estás seguro de cancelar esta reserva?");
     if (!confirmCancel) return;
 
-    setLoading(true);
-
-    try {
-      await api.patch(`/bookings/${bookingId}/cancel`);
-      // Notificar al padre para actualización optimista
-      onCancelSuccess(bookingId);
-    } catch (error) {
-      console.error(error);
-      alert("Error canceling booking");
-    } finally {
-      setLoading(false);
-    }
+    mutate(bookingId, {
+      onSuccess: () => {
+        toast.success("Reserva cancelada exitosamente");
+      },
+      onError: () => {
+        toast.error("Error al cancelar la reserva");
+      },
+    });
   };
 
   return (
     <button
       onClick={handleCancel}
-      disabled={loading}
+      disabled={isPending}
       className="text-red-500 hover:text-red-700 transition"
     >
-      {loading ? "Canceling..." : "Cancelar reserva"}
+      {isPending ? "Cancelando..." : "Cancelar reserva"}
     </button>
   );
 };

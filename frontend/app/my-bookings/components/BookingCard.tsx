@@ -5,15 +5,9 @@ import { Booking } from "@/types/booking";
 
 interface Props {
   booking: Booking;
-  onCancelSuccess: (bookingId: string) => void;
-  onUpdateSuccess: (updatedBooking: Booking) => void;
 }
 
-export default function BookingCard({
-  booking,
-  onCancelSuccess,
-  onUpdateSuccess,
-}: Props) {
+export default function BookingCard({ booking }: Props) {
   const date = new Date(booking.startTime);
 
   return (
@@ -30,19 +24,15 @@ export default function BookingCard({
           {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </p>
         <p>💵 ${booking.service.price}</p>
+        {booking.notes && (
+          <p className="text-sm text-gray-500">📝 {booking.notes}</p>
+        )}
       </div>
 
       {booking.status === "PENDING" && (
         <div className="mt-6 flex gap-6 text-sm font-medium">
-          <CancelBookingButton
-            bookingId={booking.id}
-            onCancelSuccess={onCancelSuccess}
-          />
-
-          <UpdateBookingButton
-            booking={booking}
-            onUpdateSuccess={onUpdateSuccess}
-          />
+          <CancelBookingButton bookingId={booking.id} />
+          <UpdateBookingButton booking={booking} />
         </div>
       )}
     </div>

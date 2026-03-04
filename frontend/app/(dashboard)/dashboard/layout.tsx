@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Building2,
-  Briefcase,
   Calendar,
   Users,
   User,
@@ -49,6 +48,13 @@ export default function DashboardLayout({
 
           <nav className="space-y-4">
             <Link
+              href="/"
+              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
+            >
+              ← Volver al inicio
+            </Link>
+
+            <Link
               href="/dashboard"
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
             >
@@ -62,14 +68,6 @@ export default function DashboardLayout({
             >
               <Building2 size={18} />
               Businesses
-            </Link>
-
-            <Link
-              href="/dashboard/services"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <Briefcase size={18} />
-              Services
             </Link>
 
             <Link

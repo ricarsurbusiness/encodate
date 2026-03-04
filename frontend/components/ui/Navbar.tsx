@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { Role } from "@/types/auth";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout, loading } = useAuth();
@@ -85,6 +86,15 @@ export const Navbar = () => {
                 >
                   Mis reservas
                 </Link>
+
+                {user?.role !== Role.CLIENT && (
+                  <Link
+                    href="/dashboard/businesses"
+                    className="text-gray-600 hover:text-blue-600"
+                  >
+                    Mis negocios
+                  </Link>
+                )}
 
                 <span className="text-sm text-gray-500">{user?.name}</span>
 
