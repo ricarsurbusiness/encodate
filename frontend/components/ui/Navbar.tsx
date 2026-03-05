@@ -47,17 +47,8 @@ export const Navbar = () => {
 
           {/* Links centrales */}
           <div className="flex gap-10">
-            <Link href="/explore" className="text-gray-600 hover:text-blue-600">
-              Explore
-            </Link>
-            <Link
-              href="/for-business"
-              className="text-gray-600 hover:text-blue-600"
-            >
-              For Business
-            </Link>
-            <Link href="/blog" className="text-gray-600 hover:text-blue-600">
-              Blog
+            <Link href="/businesses" className="text-gray-600 hover:text-blue-600">
+              Explorar
             </Link>
           </div>
 
@@ -67,15 +58,15 @@ export const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="rounded bg-white px-4 py-2 text-black hover:text-blue-400"
+                  className="rounded bg-white px-4 py-2 text-black hover:text-blue-400 transition"
                 >
-                  Login
+                  Iniciar sesión
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded bg-blue-700 px-4 py-2 text-white"
+                  className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800 transition"
                 >
-                  Register
+                  Registrarse
                 </Link>
               </>
             ) : (
@@ -100,9 +91,9 @@ export const Navbar = () => {
 
                 <button
                   onClick={logout}
-                  className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                  className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 transition"
                 >
-                  Logout
+                  Cerrar sesión
                 </button>
               </>
             )}

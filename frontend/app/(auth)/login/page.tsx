@@ -83,9 +83,10 @@ function LoginForm() {
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label className="text-sm text-gray-600">Email</label>
+          <label htmlFor="email" className="text-sm text-gray-600">Email</label>
           <input
-            className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            id="email"
+            className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
             type="email"
             {...register("email")}
           />
@@ -95,9 +96,10 @@ function LoginForm() {
         </div>
 
         <div>
-          <label className="text-sm text-gray-600">Password</label>
+          <label htmlFor="password" className="text-sm text-gray-600">Contraseña</label>
           <input
-            className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            id="password"
+            className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
             type="password"
             {...register("password")}
           />
@@ -117,7 +119,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50"
+          className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>

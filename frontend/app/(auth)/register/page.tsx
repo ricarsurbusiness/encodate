@@ -66,9 +66,10 @@ export default function RegisterPage() {
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label className="text-sm text-gray-600">Nombre</label>
+        <label htmlFor="name" className="text-sm text-gray-600">Nombre</label>
         <input
-          className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          id="name"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="text"
           {...register("name")}
         />
@@ -78,9 +79,10 @@ export default function RegisterPage() {
       </div>
 
       <div>
-        <label className="text-sm text-gray-600">Email</label>
+        <label htmlFor="reg-email" className="text-sm text-gray-600">Email</label>
         <input
-          className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          id="reg-email"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="email"
           {...register("email")}
         />
@@ -90,9 +92,10 @@ export default function RegisterPage() {
       </div>
 
       <div>
-        <label className="text-sm text-gray-600">Contraseña</label>
+        <label htmlFor="reg-password" className="text-sm text-gray-600">Contraseña</label>
         <input
-          className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          id="reg-password"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="password"
           {...register("password")}
         />
@@ -102,9 +105,10 @@ export default function RegisterPage() {
       </div>
 
       <div>
-        <label className="text-sm text-gray-600">Confirmar contraseña</label>
+        <label htmlFor="confirmPassword" className="text-sm text-gray-600">Confirmar contraseña</label>
         <input
-          className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          id="confirmPassword"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="password"
           {...register("confirmPassword")}
         />
@@ -116,16 +120,17 @@ export default function RegisterPage() {
       </div>
 
       <div>
-        <label className="text-sm text-gray-600">Teléfono (opcional)</label>
+        <label htmlFor="phone" className="text-sm text-gray-600">Teléfono (opcional)</label>
         <input
-          className="border rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          id="phone"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full mt-1 focus:ring-2 focus:ring-blue-500 outline-none transition"
           type="tel"
           {...register("phone")}
         />
       </div>
 
       {serverError && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-2 rounded-lg">
+        <div className="bg-red-50 border border-red-200 text-red-600 text-sm p-3 rounded-lg">
           {serverError}
         </div>
       )}
@@ -133,7 +138,7 @@ export default function RegisterPage() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50"
+        className="bg-blue-600 text-white rounded-lg py-2 font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
       </button>

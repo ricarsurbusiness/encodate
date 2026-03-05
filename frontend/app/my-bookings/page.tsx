@@ -19,7 +19,7 @@ export default function MyBookingsPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<BookingStatus | "">("");
 
-  const { data, isLoading } = useMyBookings({
+  const { data, isLoading, isError } = useMyBookings({
     page,
     limit: 5,
     ...(statusFilter ? { status: statusFilter } : {}),
@@ -32,6 +32,15 @@ export default function MyBookingsPage() {
     return (
       <div className="flex justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-5xl mx-auto py-12 px-6 text-center">
+        <p className="text-red-500 font-medium">Error al cargar tus reservas</p>
+        <p className="text-gray-400 text-sm mt-1">Intenta recargar la página</p>
       </div>
     );
   }

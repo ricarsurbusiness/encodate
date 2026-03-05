@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Building2,
   Calendar,
-  Users,
   User,
   LogOut,
   Loader2,
@@ -61,7 +60,7 @@ export default function DashboardLayout({
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
             >
               <LayoutDashboard size={18} />
-              Dashboard
+              Inicio
             </Link>
 
             <Link
@@ -69,7 +68,7 @@ export default function DashboardLayout({
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
             >
               <Building2 size={18} />
-              Businesses
+              Negocios
             </Link>
 
             <Link
@@ -77,15 +76,7 @@ export default function DashboardLayout({
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
             >
               <Calendar size={18} />
-              Bookings
-            </Link>
-
-            <Link
-              href="/dashboard/staff"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <Users size={18} />
-              Staff
+              Reservas
             </Link>
 
             <Link
@@ -93,7 +84,7 @@ export default function DashboardLayout({
               className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
             >
               <User size={18} />
-              Profile
+              Perfil
             </Link>
 
             {user?.role === Role.ADMIN && (
@@ -113,7 +104,7 @@ export default function DashboardLayout({
           className="flex items-center gap-3 text-red-500 hover:text-red-600"
         >
           <LogOut size={18} />
-          Logout
+          Cerrar sesión
         </button>
       </aside>
 

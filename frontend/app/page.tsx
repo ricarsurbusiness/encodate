@@ -23,7 +23,7 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search.trim(), 350);
-  const { data, isLoading } = useBusinesses({
+  const { data, isLoading, isError } = useBusinesses({
     page,
     limit: 6,
     search: debouncedSearch || undefined,
@@ -43,6 +43,11 @@ export default function Home() {
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        ) : isError ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 font-medium">Error al cargar los negocios</p>
+            <p className="text-gray-400 text-sm mt-1">Intenta recargar la página</p>
           </div>
         ) : (
           <>
