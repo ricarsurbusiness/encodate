@@ -140,4 +140,75 @@ docker compose up -d --build
 > ✅ El frontend estará disponible en `http://localhost:3001`.
 
 ---
+
+## 🧪 Pruebas de la Aplicación
+
+Una vez que ambos servicios están corriendo, puedes probar la aplicación usando los usuarios de demostración que se crean automáticamente al ejecutar el seed.
+
+### **Acceso a la Aplicación**
+
+Abre tu navegador y dirígete a:
+```
+http://localhost:3001
+```
+
+### **Usuarios de Demostración**
+
+El seed crea automáticamente tres usuarios con diferentes roles. Usa cualquiera de ellos para iniciar sesión:
+
+| Rol | Email | Contraseña | Descripción |
+|-----|-------|------------|-------------|
+| 👑 **Admin** | `admin@demo.com` | `Demo1234!` | Acceso completo al panel de administración, gestión de usuarios y roles. |
+| 🏪 **Propietario** | `owner@demo.com` | `Demo1234!` | Gestiona un negocio de ejemplo (Salón de Belleza), servicios y reservas del negocio. |
+| 🙋 **Cliente** | `client@demo.com` | `Demo1234!` | Acceso a búsqueda de negocios, visualización de servicios y gestión de reservas personales. |
+
+### **Datos de Prueba Precargados**
+
+Cuando ejecutas `docker compose exec backend npx prisma db seed`, se crean automáticamente:
+
+#### **Negocio de Ejemplo**
+- **Nombre:** Salón de Belleza Demo
+- **Dirección:** Av. Principal 123, Ciudad Demo
+- **Descripción:** Centro de estética y bienestar. Servicios de alta calidad para tu cuidado personal.
+
+#### **Servicios Disponibles**
+| Servicio | Duración | Precio |
+|----------|----------|--------|
+| 💇 Corte de Cabello | 30 min | $15 |
+| 🎨 Coloración | 90 min | $45 |
+| 💅 Manicure | 45 min | $20 |
+| 🦶 Pedicure | 60 min | $25 |
+| 💆 Masaje Relajante | 60 min | $40 |
+
+#### **Reservas de Ejemplo**
+- **Hace 7 días:** Corte de Cabello (COMPLETED) — Cliente satisfecho con el resultado
+- **Mañana:** Manicure (CONFIRMED) — Esmalte color rojo
+- **En 7 días:** Masaje Relajante (PENDING) — Pendiente de confirmación
+
+### **Flujos de Prueba Recomendados**
+
+#### **1️⃣ Prueba como Cliente**
+1. Inicia sesión con `client@demo.com`
+2. Explora los negocios disponibles
+3. Visualiza los servicios del Salón de Belleza Demo
+4. Reserva un servicio para una fecha disponible
+5. Ve a "Mis Reservas" y visualiza tu historial
+
+#### **2️⃣ Prueba como Propietario**
+1. Inicia sesión con `owner@demo.com`
+2. Accede al dashboard de tu negocio
+3. Visualiza las reservas pendientes
+4. Confirma, completa o rechaza una reserva
+5. Edita un servicio o agrega uno nuevo
+
+#### **3️⃣ Prueba como Administrador**
+1. Inicia sesión con `admin@demo.com`
+2. Accede al panel de administración
+3. Visualiza todos los usuarios registrados
+4. Asigna nuevos roles a los usuarios
+5. (Opcional) Elimina un usuario de prueba
+
+---
+
+---
 Creado con ❤️ por Ricardo Suárez.

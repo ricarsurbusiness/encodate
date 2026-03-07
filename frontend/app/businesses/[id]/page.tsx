@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useBusiness } from "@/hooks/useBusinesses";
 import { useCreateBooking } from "@/hooks/useBookings";
 import { ServiceCard } from "@/components/ui/ServiceCard";
-import { Loader2, MapPin, Phone } from "lucide-react";
+import { Loader2, MapPin, Phone, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import type { Service } from "@/types/service";
 
@@ -104,6 +104,14 @@ function BusinessDetailContent() {
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
+        {/* Back to home */}
+  <button
+    onClick={() => router.push("/")}
+    className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition mb-6"
+  >
+    <ArrowLeft className="w-4 h-4" />
+    Volver al inicio
+  </button>
       {/* Hero */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-700 text-white rounded-3xl p-10 mb-12 shadow-xl">
         <h1 className="text-4xl md:text-5xl font-bold mb-3">{business.name}</h1>
