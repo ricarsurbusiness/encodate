@@ -137,7 +137,7 @@ cp .env.example .env
 # 3. Construye y levanta el contenedor
 docker compose up -d --build
 ```
-> ✅ El frontend estará disponible en `http://localhost:3001`.
+> ✅ El frontend estará disponible en `http://localhost:3001` o si deseas probar en vivo puede ir a `https://encodate.vercel.app`.
 
 ---
 
@@ -150,6 +150,10 @@ Una vez que ambos servicios están corriendo, puedes probar la aplicación usand
 Abre tu navegador y dirígete a:
 ```
 http://localhost:3001
+```
+o tambien puedes ir a:
+```
+https://encodate.vercel.app
 ```
 
 ### **Usuarios de Demostración**
