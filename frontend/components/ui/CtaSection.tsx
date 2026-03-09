@@ -1,4 +1,4 @@
-export const CTASection = () => {
+export default function CtaSection() {
   return (
     <section className="py-12 md:py-20 lg:py-32 px-4 sm:px-6 md:px-8 bg-slate-900">
       <div className="max-w-7xl mx-auto">
@@ -37,4 +37,4 @@ export const CTASection = () => {
       </div>
     </section>
   );
-};
+}
