@@ -4,7 +4,7 @@ import { useBusinesses } from "@/hooks/useBusinesses";
 import { BusinessList } from "@/components/ui/BusinessList";
 import { HeroSection } from "@/components/ui/HeroSection";
 import { Navbar } from "@/components/ui/Navbar";
-import { CTASection } from "@/components/ui/CtaSection";
+import CtaSection from "@/components/ui/CtaSection";
 import { Footer } from "@/components/ui/Footer";
 import { Pagination } from "@/components/ui/Pagination";
 import { useState, useEffect } from "react";
@@ -62,7 +62,7 @@ export default function Home() {
           </>
         )}
       </main>
-      <CTASection />
+      <CtaSection />
       <Footer />
     </div>
   );
