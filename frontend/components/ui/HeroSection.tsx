@@ -9,15 +9,15 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ value, onChange }: HeroSectionProps) => {
   return (
-    <div className="flex flex-col py-12 md:py-20 lg:py-32 px-4 sm:px-6 md:px-8 bg-gray-50 text-center">
+    <div className="flex flex-col py-6 md:py-8 px-4 sm:px-6 md:px-8 bg-gray-50 text-center">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
           Encuentra y reserva en los mejores
         </h1>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-blue-700 font-bold mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-blue-700 font-bold mb-3">
           negocios locales
         </h1>
-        <h3 className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 pt-3 pb-2">
+        <h3 className="text-sm sm:text-base md:text-lg text-gray-600 mb-6">
           Descubre los mejores negocios locales cerca de ti
         </h3>
       </div>
