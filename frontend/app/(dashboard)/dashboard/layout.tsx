@@ -1,8 +1,9 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useState } from 'react'
+import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   Building2,
@@ -11,16 +12,19 @@ import {
   LogOut,
   Loader2,
   Shield,
-} from "lucide-react";
-import { Role } from "@/types/auth";
+  Menu,
+} from 'lucide-react'
+import { Role } from '@/types/auth'
+import Sidebar from '@/components/ui/Sidebar'
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { logout, loading, isAuthenticated, user } = useAuth();
-  const router = useRouter();
+  const { logout, loading, isAuthenticated, user } = useAuth()
+  const router = useRouter()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Auth guard — defense-in-depth behind middleware
   if (loading) {
@@ -28,88 +32,54 @@ export default function DashboardLayout({
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
-    );
+    )
   }
 
   if (!isAuthenticated) {
-    router.push("/login");
-    return null;
+    router.push('/login')
+    return null
   }
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100">
+      {/* Overlay para móvil */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6 flex flex-col justify-between">
-        <div>
-          <h2 className="text-2xl font-bold mb-10">ENCODATE</h2>
-
-          <nav className="space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              ← Volver al inicio
-            </Link>
-
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <LayoutDashboard size={18} />
-              Inicio
-            </Link>
-
-            <Link
-              href="/dashboard/businesses"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <Building2 size={18} />
-              Negocios
-            </Link>
-
-            <Link
-              href="/dashboard/bookings"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <Calendar size={18} />
-              Reservas
-            </Link>
-
-            <Link
-              href="/dashboard/profile"
-              className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-            >
-              <User size={18} />
-              Perfil
-            </Link>
-
-            {user?.role === Role.ADMIN && (
-              <Link
-                href="/dashboard/admin/users"
-                className="flex items-center gap-3 text-gray-700 hover:text-blue-600"
-              >
-                <Shield size={18} />
-                Admin – Usuarios
-              </Link>
-            )}
-          </nav>
-        </div>
-
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 text-red-500 hover:text-red-600"
-        >
-          <LogOut size={18} />
-          Cerrar sesión
-        </button>
+      <aside
+        className={`fixed lg:static w-64 h-screen bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-40 lg:z-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        <Sidebar onClose={() => setSidebarOpen(false)} />
       </aside>
 
-      {/* Content */}
-      <main className="flex-1 p-10">{children}</main>
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Header con Hamburger */}
+        <header className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between lg:hidden">
+          <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 text-gray-600 hover:text-gray-900"
+            aria-label="Toggle sidebar"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </header>
+
+        {/* Page Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="p-4 sm:p-6 lg:p-10">
+            {children}
+          </div>
+        </div>
+      </main>
     </div>
-  );
+  )
 }
