@@ -37,30 +37,32 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50">
       <Navbar />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8">
         <HeroSection value={search} onChange={setSearch} />
-
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          </div>
-        ) : isError ? (
-          <div className="text-center py-12">
-            <p className="text-red-500 font-medium">Error al cargar los negocios</p>
-            <p className="text-gray-400 text-sm mt-1">Intenta recargar la página</p>
-          </div>
-        ) : (
-          <>
-            <BusinessList businesses={data?.data ?? []} />
-            {data?.meta && (
-              <Pagination
-                currentPage={data.meta.page}
-                totalPages={data.meta.totalPages}
-                onPageChange={setPage}
-              />
-            )}
-          </>
-        )}
+        
+        <div className="mt-6 md:mt-8">
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+          ) : isError ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 font-medium">Error al cargar los negocios</p>
+              <p className="text-gray-400 text-sm mt-1">Intenta recargar la página</p>
+            </div>
+          ) : (
+            <>
+              <BusinessList businesses={data?.data ?? []} />
+              {data?.meta && (
+                <Pagination
+                  currentPage={data.meta.page}
+                  totalPages={data.meta.totalPages}
+                  onPageChange={setPage}
+                />
+              )}
+            </>
+          )}
+        </div>
       </main>
       <CtaSection />
       <Footer />
