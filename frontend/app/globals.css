@@ -4,6 +4,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Z-INDEX DOCUMENTATION & STACKING CONTEXT
+ * 
+ * Current usage in the codebase:
+ * - z-10: Used for relative positioned elements (CtaSection gradients, overlays)
+ * - z-50: Used for modals and fixed overlays (ServiceFormModal, UpdateBookingModal)
+ * 
+ * Tailwind z-scale (defaults):
+ * - z-0, z-10, z-20, z-30, z-40, z-50
+ * 
+ * When implementing responsive features (Phase 2-4):
+ * - Navbar: z-40 (fixed, hamburger, mobile menu drawer)
+ * - Dashboard Sidebar Drawer: z-40 (drawer overlay on mobile)
+ * - Modals/Dialogs: z-50 (highest layer, modal interactions)
+ * 
+ * No custom z-index values are needed beyond Tailwind defaults.
+ * All existing z-index usage is compliant with this stacking context.
+ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -117,12 +136,39 @@
 }
 
 @layer base {
+  /* Mobile-first defaults */
+  html {
+    font-size: 16px; /* Base for rem calculations */
+  }
+
+  body {
+    @apply bg-background text-foreground text-base leading-relaxed;
+  }
+
+  /* Responsive typography scale */
+  h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold;
+  }
+
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl font-semibold;
+  }
+
+  /* Ensure containers are fluid and responsive */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  button, a {
+    @apply transition-colors duration-200;
+  }
+
+  /* Reset border and outline utilities */
   * {
     @apply border-border outline-ring/50;
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-    @apply bg-background text-foreground;
   }
 }
